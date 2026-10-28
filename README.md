@@ -1,113 +1,135 @@
-# Omachy Desktop 🐧✨
+# Omachy Desktop Suite 🐧✨
 
-A modern Linux desktop companion with a macOS-inspired floating aesthetic, built completely from scratch with its own visual identity and zero proprietary Apple code or assets.
-
----
-
-## 🚀 Key Highlights & Design
-
-- **Original Linux Companion Identity**: Deep obsidian and acrylic glassmorphism dark theme, rounded floating panels, custom geometric vector branding, and subtle animations.
-- **Left Navigation Sidebar**: Seamless access to **Home**, **My Files**, **Phone**, **Jarvis**, **Developer Tools**, and **Settings**.
-- **macOS-Inspired Application Dock**: Floating curved dock with glass blur, magnification/bounce hover feedback, active indicator dots, and quick-launch buttons.
-- **Global Command Palette (`Ctrl+K`)**: Fast keyboard-driven command runner and global action search with arrow-key navigation.
-- **Home Dashboard**: Live digital clock, dynamic day greeting, responsive telemetry cards (CPU, RAM, Storage, Network), interactive desktop quick actions, and recent activity feed.
-- **Phone Companion Hub**: Demonstration mode for mobile connectivity with KDE Connect protocol readiness, device discovery radar, PIN verification, and integration toggles.
-- **File Transfer Center**: Clearly separated **Send** (drag-and-drop dropzone & destination picker) and **Receive** (listening port & simulate beam) workflows with an honest queue status.
-- **Jarvis Desktop AI**: Built-in companion chat with system task synthesis, prompt chips, and one-click copyable Linux commands.
-- **Developer Hub**: Local project tracker with git branches, quick terminal command presets (`htop`, `git status`, `df -h`, `docker ps`), and workspace shortcuts.
-- **Safety Compliant**: Zero root elevation (`sudo`) required, no automatic background services registered, no secrets or keys in code.
+A modular suite of standalone Linux desktop utility applications for **Omarchy Linux (Arch-based) / Hyprland (Wayland)**. Built with a modern acrylic glass aesthetic, real Linux hardware and network integrations, and completely independent native application windows.
 
 ---
 
-## 🛠️ Technology Stack
+## 🧭 Architecture Overview
 
-- **Framework**: [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **Bundler & Dev Server**: [Vite 6](https://vitejs.dev/)
-- **Styling**: Modular CSS3 (Design tokens, CSS variables, glassmorphism, keyframe animations)
-- **Icons**: [Lucide React](https://lucide.dev/) (Open-source ISC license)
+Omachy is **not** a website or an OS shell replacement. It is a suite of individual, installable desktop utilities:
 
----
+```mermaid
+flowchart TD
+    Launcher["Omachy Desktop Launcher / CLI (bin/omachy)"] --> CC["Omachy Control Center\n(380x590 utility window)"]
+    Launcher --> CN["Omachy Connect\n(480x620 phone hub)"]
+    Launcher --> DR["Omachy Drop\n(480x580 file transfer)"]
+    Launcher --> JV["Omachy Jarvis\n(520x680 shell AI)"]
+    Launcher --> DV["Omachy Dev Tools\n(780x620 projects hub)"]
+    Launcher --> SU["Omachy Suite\n(980x680 multi-launcher)"]
 
-## 📂 Project Architecture
+    subgraph Native Linux Integration Layer (server/system_bridge.py)
+        NM["NetworkManager (nmcli)"]
+        BZ["BlueZ (bluetoothctl)"]
+        PW["PipeWire / WirePlumber (wpctl)"]
+        SYS["Linux sysfs (/sys/class/power_supply)"]
+        KD["KDE Connect detection (kdeconnect-cli)"]
+        FS["Real Drop directory (~/Downloads/OmachyDrop)"]
+    end
 
-```
-agy-demo/
-├── public/
-│   └── omachy-icon.svg          # Original vector logo
-├── src/
-│   ├── components/
-│   │   ├── command-palette/
-│   │   │   └── CommandPalette.tsx # Ctrl+K global modal palette
-│   │   ├── dashboard/
-│   │   │   ├── ClockWidget.tsx    # Live clock & date widget
-│   │   │   ├── HomeDashboard.tsx  # Main dashboard layout
-│   │   │   ├── QuickActions.tsx   # DND, IP copy, screenshot, etc.
-│   │   │   ├── RecentItems.tsx    # Recent activity list
-│   │   │   └── SystemStatusCard.tsx # CPU, RAM, Disk, Network
-│   │   ├── developer/
-│   │   │   └── DeveloperPanel.tsx # Projects & terminal presets
-│   │   ├── jarvis/
-│   │   │   └── JarvisPanel.tsx    # AI assistant companion
-│   │   ├── layout/
-│   │   │   ├── Dock.tsx           # Floating macOS-style dock
-│   │   │   ├── Header.tsx         # Companion top bar
-│   │   │   └── Sidebar.tsx        # Left navigation sidebar
-│   │   ├── phone/
-│   │   │   └── PhonePanel.tsx     # KDE Connect phone hub
-│   │   ├── settings/
-│   │   │   └── SettingsPanel.tsx  # Accent color, theme, safety
-│   │   └── transfers/
-│   │       └── TransferPanel.tsx  # Send & Receive file actions
-│   ├── mock/
-│   │   └── mockData.ts            # Realistic mock data
-│   ├── modules/                   # Extensible integration modules
-│   │   ├── kdeconnect/            # KDE Connect D-Bus bridge
-│   │   ├── transfers/             # Socket / WebRTC transfer bridge
-│   │   ├── jarvis/                # Local LLM / Ollama engine bridge
-│   │   └── system/                # Linux sysfs telemetry reader
-│   ├── styles/
-│   │   ├── animations.css         # Keyframe animations & transitions
-│   │   ├── components.css         # Layout, cards, dock, palette styles
-│   │   ├── index.css              # Global styles & scrollbars
-│   │   └── variables.css          # Color tokens & glass variables
-│   ├── types/                     # TypeScript definitions
-│   ├── App.tsx                    # Top-level coordinator & hotkeys
-│   └── main.tsx                   # React root entry
-├── index.html
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
+    CC --> NM & BZ & PW & SYS
+    CN --> KD
+    DR --> FS
+    JV --> SYS
 ```
 
 ---
 
-## 🚦 How to Run Locally
+## 📦 The 5 Standalone Applications
 
-### 1. Start the Vite Development Server
-Inside `/home/biggiesam/agy-demo`, run:
+1. **Omachy Control Center** (`omachy control-center`):
+   - Compact utility window (inspired by macOS Control Center & Linux quick settings).
+   - Real Wi-Fi network connection (`nmcli`), signal strength, radio toggle, and network scanner.
+   - Real Bluetooth status (`bluetoothctl`), power switch, and paired device list (`BT Speaker`, `vivo V21`, `TWS`).
+   - Real audio output slider controlling PipeWire/WirePlumber (`wpctl`), with mute toggle and sink identification.
+   - Real battery capacity & charging state from Linux sysfs (`/sys/class/power_supply/BAT0`).
+   - One-click shortcuts for Do Not Disturb, Jarvis, Drop, and Suite.
+
+2. **Omachy Connect** (`omachy connect`):
+   - Phone pairing and convergence hub.
+   - Real KDE Connect detection: reports whether `kdeconnect-cli` is active or missing, with clear fallback instructions.
+   - PIN verification simulation, Wi-Fi discovery scan, and feature toggles.
+
+3. **Omachy Drop** (`omachy drop`):
+   - Real file transfer and staging tool.
+   - Drag-and-drop or select any real file on your system to stage it into `~/Downloads/OmachyDrop/`.
+   - Real file list with file sizes and timestamps.
+   - One-click button to open `~/Downloads/OmachyDrop/` in the system file manager via `xdg-open`.
+
+4. **Omachy Jarvis** (`omachy jarvis`):
+   - Interactive intelligent shell assistant.
+   - Distinguishes **Suggestions** (read-only AI recommendations) from **Executed Commands**.
+   - Confirmation dialog before running any command: *"Are you sure you want to run this in your user shell?"*
+   - Root / `sudo` execution prohibited by safety policy.
+   - Displays real exit code, stdout, and stderr.
+
+5. **Omachy Developer Tools** (`omachy developer`):
+   - Workspace repository browser with Git branch badges and path copying.
+   - Presets for common Linux commands (`ps aux`, `df -h`, `ip -br addr`, `systemctl --user`).
+   - Real output capture box.
+
+6. **Omachy Suite Launcher** (`omachy suite`):
+   - Hub to launch any of the standalone windows independently.
+   - Includes access to the original reference prototype.
+
+---
+
+## 🚀 How to Run
+
+### Command-Line Execution
+Run any application directly from terminal inside `/home/biggiesam/agy-demo`:
+
 ```bash
-npm run dev
-```
-Then open your browser at:
-`http://localhost:5173`
+# Launch Omachy Control Center
+./bin/omachy control-center
 
-### 2. Run Production Build & Typecheck
-```bash
-npm run typecheck    # Strict TypeScript verification
-npm run build        # Build optimized static distribution into dist/
-npm run preview      # Preview production build locally
+# Launch Omachy Connect (Phone Hub)
+./bin/omachy connect
+
+# Launch Omachy Drop (File Beam)
+./bin/omachy drop
+
+# Launch Omachy Jarvis (Shell Assistant)
+./bin/omachy jarvis
+
+# Launch Omachy Developer Tools
+./bin/omachy developer
+
+# Launch Master Suite Launcher
+./bin/omachy suite
 ```
+
+### Install Application Launchers (App Menu)
+To install `.desktop` entries into `~/.local/share/applications/` so they appear in your application launcher (wofi/rofi/anyrun/fuzzel):
+
+```bash
+./bin/install-desktop-launchers.sh
+```
+*(Runs strictly within user space — no `sudo` required!)*
 
 ---
 
-## 🔍 Demonstration States vs. Real Integrations
+## 🛠️ Tauri 2 Migration Path & Environment Assessment
 
-In compliance with honest software design, all prototype features clearly distinguish between mock demonstrators and future native integrations:
+| Metric | Status |
+| :--- | :--- |
+| **Operating System** | Omarchy 4.0.4 (Arch-based Linux) |
+| **Window Manager** | Hyprland (Wayland Session) |
+| **Rust Toolchain (`rustc` / `cargo`)** | **Not installed** |
+| **Current Native Runner** | Native Wayland Gtk 3 + WebKit2 4.1 (`PyGObject`) |
 
-| Feature | Current State | Production Integration Plan |
-| :--- | :--- | :--- |
-| **System Telemetry** | Realistic simulation with subtle micro-fluctuations | Read `/proc/stat`, `/proc/meminfo`, and `statvfs` via local backend or D-Bus |
-| **Phone Connection** | Demonstrator discovery scan & PIN verification | Native `org.kde.kdeconnect` D-Bus daemon interface (`kdeconnectd`) |
-| **File Transfers** | Local simulation dropzone & simulated receive queue | KDE Connect file transfer protocol (port 1716) or local socket bridge |
-| **Jarvis AI Assistant** | Intelligent pattern matcher & terminal command synthesizer | Local [Ollama](https://ollama.ai) instance (`localhost:11434`) or custom LLM sidecar |
-| **Terminal Presets** | One-click clipboard copy & quick preview | Direct execution via user shell or terminal multiplexer (`kitty`, `alacritty`, `foot`) |
+### Recommended Migration Path:
+1. **Stage 1 (Current - Zero Extra Dependencies)**:
+   - Uses system-native `PyGObject` + `WebKit2 4.1` (already installed on Omarchy).
+   - Instant native Wayland windows, zero compilation overhead, zero package installation.
+   - Uses real Linux CLI tools (`nmcli`, `bluetoothctl`, `wpctl`, `/sys/class/power_supply`).
+2. **Stage 2 (Tauri 2 Compilation)**:
+   - When ready and approved, install Rust:
+     ```bash
+     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+     ```
+   - Initialize Tauri in the project:
+     ```bash
+     npm install -D @tauri-apps/cli @tauri-apps/api
+     npx tauri init
+     ```
+   - Because the React frontend already calls the clean `systemApi` JSON contract, moving to Tauri 2 involves mapping `systemApi` calls directly to `tauri::command` handlers in Rust!
