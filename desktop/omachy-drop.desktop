@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Drop
+Comment=Fast Local Wireless File Beam & Staging Center
+Exec=/home/biggiesam/agy-demo/bin/omachy drop
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Utility;FileTransfer;Network;
+StartupWMClass=omachy-drop
+Keywords=file;transfer;drop;share;beam;download;

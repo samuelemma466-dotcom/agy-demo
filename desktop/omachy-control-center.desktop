@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Control Center
+Comment=Linux Quick Settings & Hardware Utility Window
+Exec=/home/biggiesam/agy-demo/bin/omachy control-center
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Utility;Settings;HardwareSettings;
+StartupWMClass=omachy-control-center
+Keywords=wifi;bluetooth;volume;audio;battery;quick;settings;

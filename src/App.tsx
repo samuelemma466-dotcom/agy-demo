@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { ControlCenterApp } from './apps/ControlCenterApp';
+import { ConnectApp } from './apps/ConnectApp';
+import { DropApp } from './apps/DropApp';
+import { JarvisApp } from './apps/JarvisApp';
+import { DeveloperApp } from './apps/DeveloperApp';
+import { SuiteApp } from './apps/SuiteApp';
+
+// Preserved reference components from initial prototype
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { Dock } from './components/layout/Dock';
@@ -10,11 +18,17 @@ import { JarvisPanel } from './components/jarvis/JarvisPanel';
 import { DeveloperPanel } from './components/developer/DeveloperPanel';
 import { SettingsPanel } from './components/settings/SettingsPanel';
 import { NavigationTab, CommandPaletteItem } from './types/navigation';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import './styles/index.css';
 import './styles/components.css';
 
 export const App: React.FC = () => {
+  // Determine application mode from URL parameter (?app=control-center etc.)
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialApp = queryParams.get('app') || 'suite';
+  const [appMode, setAppMode] = useState<string>(initialApp);
+
+  // Reference companion state
   const [activeTab, setActiveTab] = useState<NavigationTab>('home');
   const [phoneConnected, setPhoneConnected] = useState<boolean>(false);
   const [paletteOpen, setPaletteOpen] = useState<boolean>(false);
@@ -47,9 +61,33 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [paletteOpen]);
 
-  // Command palette registry
+  // If specific standalone window is requested, render that standalone app directly:
+  if (appMode === 'control-center') {
+    return <ControlCenterApp />;
+  }
+
+  if (appMode === 'connect') {
+    return <ConnectApp />;
+  }
+
+  if (appMode === 'drop') {
+    return <DropApp />;
+  }
+
+  if (appMode === 'jarvis') {
+    return <JarvisApp />;
+  }
+
+  if (appMode === 'developer') {
+    return <DeveloperApp />;
+  }
+
+  if (appMode === 'suite') {
+    return <SuiteApp onOpenReferenceCompanion={() => setAppMode('reference')} />;
+  }
+
+  // Reference Companion View (Preserved initial prototype)
   const commandPaletteItems: CommandPaletteItem[] = [
-    // Navigation
     {
       id: 'nav-home',
       title: 'Go to Home Dashboard',
@@ -57,7 +95,6 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'home',
       action: () => setActiveTab('home'),
-      keywords: ['dashboard', 'overview', 'clock', 'home'],
     },
     {
       id: 'nav-files',
@@ -66,7 +103,6 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'files',
       action: () => setActiveTab('files'),
-      keywords: ['transfer', 'send', 'receive', 'download', 'upload'],
     },
     {
       id: 'nav-phone',
@@ -75,7 +111,6 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'phone',
       action: () => setActiveTab('phone'),
-      keywords: ['mobile', 'android', 'ios', 'kde', 'pair', 'sms'],
     },
     {
       id: 'nav-jarvis',
@@ -84,7 +119,6 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'jarvis',
       action: () => setActiveTab('jarvis'),
-      keywords: ['ai', 'assistant', 'chat', 'ollama', 'llm'],
     },
     {
       id: 'nav-developer',
@@ -93,7 +127,6 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'developer',
       action: () => setActiveTab('developer'),
-      keywords: ['git', 'shell', 'bash', 'projects', 'htop'],
     },
     {
       id: 'nav-settings',
@@ -102,85 +135,30 @@ export const App: React.FC = () => {
       category: 'Navigation',
       iconName: 'settings',
       action: () => setActiveTab('settings'),
-      keywords: ['theme', 'appearance', 'hotkeys', 'privacy'],
-    },
-
-    // Actions
-    {
-      id: 'act-copy-ip',
-      title: 'Copy Local IP Address',
-      description: 'Copy 192.168.1.105 to clipboard',
-      category: 'Actions',
-      iconName: 'action',
-      action: () => {
-        navigator.clipboard.writeText('192.168.1.105');
-        showNotification('Copied local IP address to clipboard');
-      },
-      keywords: ['network', 'ip', 'lan', 'wifi'],
-    },
-    {
-      id: 'act-screenshot',
-      title: 'Capture Desktop Screenshot',
-      description: 'Take a snapshot of current companion view',
-      category: 'Actions',
-      iconName: 'action',
-      action: () => {
-        showNotification('Screenshot saved to ~/Pictures/ (Simulated)');
-      },
-      keywords: ['capture', 'screenshot', 'photo', 'screen'],
-    },
-    {
-      id: 'act-term-htop',
-      title: 'Run Process Viewer (htop)',
-      description: 'Open interactive process monitor preset',
-      category: 'Developer',
-      iconName: 'developer',
-      action: () => {
-        setActiveTab('developer');
-        navigator.clipboard.writeText('htop');
-        showNotification('Switched to Developer tools & copied "htop"');
-      },
-      keywords: ['htop', 'process', 'cpu', 'memory'],
-    },
-    {
-      id: 'act-term-git',
-      title: 'Git Status Summary',
-      description: 'Copy "git status -sb" to clipboard',
-      category: 'Developer',
-      iconName: 'developer',
-      action: () => {
-        navigator.clipboard.writeText('git status -sb');
-        showNotification('Copied "git status -sb" to clipboard');
-      },
-      keywords: ['git', 'repo', 'status'],
-    },
-    {
-      id: 'act-pair-phone',
-      title: 'Scan for Mobile Device',
-      description: 'Initiate KDE Connect discovery broadcast',
-      category: 'Actions',
-      iconName: 'phone',
-      action: () => {
-        setActiveTab('phone');
-        showNotification('Navigated to Phone pairing');
-      },
-      keywords: ['kde', 'connect', 'phone', 'pair', 'device'],
     },
   ];
 
-  const handleOpenQuickTerminal = () => {
-    setActiveTab('developer');
-    showNotification('Switched to Developer Tools for terminal presets');
-  };
-
-  const handleOpenCodeEditor = () => {
-    navigator.clipboard.writeText('code /home/biggiesam/agy-demo');
-    showNotification('Copied "code /home/biggiesam/agy-demo" to clipboard');
-  };
-
   return (
     <div className="app-container">
-      {/* Toast Notification */}
+      {/* Return to Suite Banner */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '12px',
+          left: '260px',
+          zIndex: 50,
+        }}
+      >
+        <button
+          className="btn btn-secondary"
+          style={{ padding: '4px 10px', fontSize: '11px', backdropFilter: 'blur(10px)' }}
+          onClick={() => setAppMode('suite')}
+        >
+          <ArrowLeft size={12} />
+          <span>Back to App Suite Launcher</span>
+        </button>
+      </div>
+
       {toastMessage && (
         <div
           className="animate-fade-in"
@@ -207,30 +185,25 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Global Command Palette (Ctrl+K) */}
       <CommandPalette
         isOpen={paletteOpen}
         onClose={() => setPaletteOpen(false)}
         items={commandPaletteItems}
       />
 
-      {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
         onTabChange={(tab) => setActiveTab(tab)}
         phoneConnected={phoneConnected}
       />
 
-      {/* Main Companion Layout */}
       <div className="main-area">
-        {/* Top Header */}
         <Header
           currentTab={activeTab}
           onOpenCommandPalette={() => setPaletteOpen(true)}
           phoneConnected={phoneConnected}
         />
 
-        {/* Content Body View Switcher */}
         <main className="content-body">
           {activeTab === 'home' && (
             <HomeDashboard
@@ -268,8 +241,11 @@ export const App: React.FC = () => {
           {activeTab === 'developer' && (
             <DeveloperPanel
               onShowNotification={showNotification}
-              onOpenQuickTerminal={handleOpenQuickTerminal}
-              onOpenCodeEditor={handleOpenCodeEditor}
+              onOpenQuickTerminal={() => setActiveTab('developer')}
+              onOpenCodeEditor={() => {
+                navigator.clipboard.writeText('code /home/biggiesam/agy-demo');
+                showNotification('Copied code command to clipboard');
+              }}
             />
           )}
 
@@ -278,12 +254,14 @@ export const App: React.FC = () => {
           )}
         </main>
 
-        {/* Bottom macOS-Inspired Floating Dock */}
         <Dock
           activeTab={activeTab}
           onSelectTab={(tab) => setActiveTab(tab)}
-          onOpenQuickTerminal={handleOpenQuickTerminal}
-          onOpenCodeEditor={handleOpenCodeEditor}
+          onOpenQuickTerminal={() => setActiveTab('developer')}
+          onOpenCodeEditor={() => {
+            navigator.clipboard.writeText('code /home/biggiesam/agy-demo');
+            showNotification('Copied code command to clipboard');
+          }}
         />
       </div>
     </div>

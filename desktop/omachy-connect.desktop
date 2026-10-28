@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Connect
+Comment=Phone Companion & Convergence Hub
+Exec=/home/biggiesam/agy-demo/bin/omachy connect
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Utility;Network;Telephony;
+StartupWMClass=omachy-connect
+Keywords=phone;android;ios;kdeconnect;mobile;

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Jarvis
+Comment=Interactive Intelligent Shell Companion
+Exec=/home/biggiesam/agy-demo/bin/omachy jarvis
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Utility;Development;System;
+StartupWMClass=omachy-jarvis
+Keywords=ai;jarvis;terminal;shell;assistant;

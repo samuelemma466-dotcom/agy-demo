@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Desktop Suite
+Comment=Linux Desktop Companion Suite
+Exec=/home/biggiesam/agy-demo/bin/omachy suite
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Utility;System;
+StartupWMClass=omachy-suite
+Keywords=omachy;suite;launcher;desktop;companion;

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Omachy Desktop — Standalone Linux Application Runner
+# ==============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+cd "${PROJECT_ROOT}"
+
+# Ensure dist/ production build exists
+if [ ! -f "${PROJECT_ROOT}/dist/index.html" ]; then
+  echo "[omachy] Building production frontend bundles..."
+  npm run build
+fi
+
+APP_TARGET="${1:-suite}"
+
+case "${APP_TARGET}" in
+  control-center|connect|drop|jarvis|developer|suite)
+    ;;
+  *)
+    echo "Usage: omachy [control-center | connect | drop | jarvis | developer | suite]"
+    exit 1
+    ;;
+esac
+
+echo "[omachy] Launching native window: ${APP_TARGET}..."
+exec python3 "${PROJECT_ROOT}/server/app_runner.py" --app "${APP_TARGET}"

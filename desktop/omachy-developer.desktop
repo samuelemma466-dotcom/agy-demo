@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omachy Developer Tools
+Comment=Workspace Projects & Shell Command Presets
+Exec=/home/biggiesam/agy-demo/bin/omachy developer
+Icon=/home/biggiesam/agy-demo/public/omachy-icon.svg
+Terminal=false
+Type=Application
+Categories=Development;Building;
+StartupWMClass=omachy-developer
+Keywords=git;developer;projects;terminal;code;
