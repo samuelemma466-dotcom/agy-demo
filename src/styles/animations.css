@@ -1,0 +1,73 @@
+/* Keyframes & Animation Utilities */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(var(--accent-active-rgb), 0.2);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(var(--accent-active-rgb), 0.5);
+  }
+}
+
+@keyframes radarSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes dockBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1.15);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.22);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards ease-out;
+}
+
+.animate-scale-in {
+  animation: fadeInScale var(--transition-fast) forwards ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite;
+}

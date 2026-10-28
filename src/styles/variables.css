@@ -1,0 +1,67 @@
+:root {
+  /* Color Palette - Modern Deep Obsidian & Slate (Original Identity, No Apple Assets) */
+  --bg-primary: #0a0d14;
+  --bg-secondary: #0f1420;
+  --bg-surface: #151c2c;
+  --bg-surface-elevated: #1a2336;
+  --bg-glass: rgba(18, 24, 38, 0.72);
+  --bg-glass-heavy: rgba(12, 17, 28, 0.88);
+  --bg-glass-input: rgba(22, 30, 48, 0.6);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(56, 189, 248, 0.4);
+
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #090d16;
+
+  /* Accent Colors */
+  --accent-cyan: #38bdf8;
+  --accent-cyan-rgb: 56, 189, 248;
+  --accent-blue: #3b82f6;
+  --accent-indigo: #6366f1;
+  --accent-purple: #a855f7;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  /* Current Active Accent (defaults to Cyan/Neon Blue companion) */
+  --accent-active: var(--accent-cyan);
+  --accent-active-rgb: var(--accent-cyan-rgb);
+
+  /* Status Colors */
+  --status-online: #10b981;
+  --status-idle: #f59e0b;
+  --status-offline: #64748b;
+  --status-busy: #f43f5e;
+
+  /* Layout & Sizing */
+  --sidebar-width: 250px;
+  --sidebar-width-collapsed: 76px;
+  --header-height: 60px;
+  --dock-height: 72px;
+
+  /* Glassmorphism & Elevation */
+  --blur-glass: blur(18px);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-dock: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.25);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
