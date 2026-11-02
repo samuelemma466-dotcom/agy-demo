@@ -16,6 +16,7 @@ interface JarvisMessageItem {
   text: string;
   timestamp: string;
   suggestedCommand?: string;
+  suggestedAction?: string;
   executionResult?: JarvisExecResult;
   isExecuted?: boolean;
 }
@@ -24,7 +25,7 @@ const INITIAL_MESSAGES: JarvisMessageItem[] = [
   {
     id: 'msg-1',
     role: 'system',
-    text: 'Jarvis Desktop Companion Engine initialized. Commands are strictly proposed as suggestions and never executed automatically without your confirmation.',
+    text: 'Jarvis Desktop Companion Engine initialized. Generated commands are not executable; only fixed read-only system checks are available.',
     timestamp: 'Just now',
   },
   {
@@ -45,7 +46,7 @@ const PROMPT_CHIPS = [
 export const JarvisApp: React.FC = () => {
   const [messages, setMessages] = useState<JarvisMessageItem[]>(INITIAL_MESSAGES);
   const [inputVal, setInputVal] = useState('');
-  const [confirmCommand, setConfirmCommand] = useState<string | null>(null);
+  const [confirmCommand, setConfirmCommand] = useState<{ action: string; label: string } | null>(null);
   const [executing, setExecuting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -68,20 +69,25 @@ export const JarvisApp: React.FC = () => {
 
     let reply = "I've synthesized a recommendation for your task.";
     let suggestedCommand: string | undefined = undefined;
+    let suggestedAction: string | undefined = undefined;
 
     const q = text.toLowerCase();
     if (q.includes('process') || q.includes('htop') || q.includes('cpu')) {
       reply = 'To inspect active system processes:';
-      suggestedCommand = 'ps aux --sort=-%cpu | head -n 6';
+      suggestedCommand = 'ps -eo pid,comm,%cpu,%mem --sort=-%cpu';
+      suggestedAction = 'process_summary';
     } else if (q.includes('storage') || q.includes('disk') || q.includes('usage')) {
       reply = 'To view disk partition utilization:';
       suggestedCommand = 'df -h /';
+      suggestedAction = 'disk_usage';
     } else if (q.includes('network') || q.includes('ip') || q.includes('interface')) {
       reply = 'To list active network links and IP addresses:';
       suggestedCommand = 'ip -br addr';
+      suggestedAction = 'network_interfaces';
     } else if (q.includes('systemd') || q.includes('service')) {
       reply = 'To view running user systemd services:';
       suggestedCommand = 'systemctl --user list-units --type=service --state=running';
+      suggestedAction = 'user_services';
     }
 
     const assistantMsg: JarvisMessageItem = {
@@ -90,6 +96,7 @@ export const JarvisApp: React.FC = () => {
       text: reply,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       suggestedCommand,
+      suggestedAction,
     };
 
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
@@ -97,19 +104,19 @@ export const JarvisApp: React.FC = () => {
 
   const handleConfirmExecution = async () => {
     if (!confirmCommand) return;
-    const cmd = confirmCommand;
+    const { action, label } = confirmCommand;
     setConfirmCommand(null);
     setExecuting(true);
 
     try {
-      const result = await systemApi.executeJarvisCommand(cmd);
+      const result = await systemApi.runAllowedAction(action);
 
       setMessages((prev) => [
         ...prev,
         {
           id: `exec-${Date.now()}`,
           role: 'system',
-          text: `Executed: $ ${cmd}`,
+          text: `Ran permitted read-only action: ${label}`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           executionResult: result,
           isExecuted: true,
@@ -122,7 +129,7 @@ export const JarvisApp: React.FC = () => {
         {
           id: `exec-${Date.now()}`,
           role: 'system',
-          text: `Execution failed for: $ ${cmd}`,
+          text: `Permitted action failed: ${label}`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           executionResult: { success: false, error: errorMsg },
           isExecuted: true,
@@ -144,7 +151,7 @@ export const JarvisApp: React.FC = () => {
       style={{
         width: '100%',
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 10% 10%, #151c2c 0%, #0a0d14 100%)',
+        background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
         color: 'var(--text-primary)',
         padding: '16px',
         display: 'flex',
@@ -173,7 +180,7 @@ export const JarvisApp: React.FC = () => {
           <div
             className="animate-scale-in"
             style={{
-              background: '#151c2c',
+              background: 'var(--bg-surface)',
               border: '1px solid var(--border-medium)',
               borderRadius: 'var(--radius-lg)',
               padding: '20px',
@@ -186,13 +193,13 @@ export const JarvisApp: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <ShieldAlert size={20} color="#fbbf24" />
-              <h3 style={{ fontSize: '15px', fontWeight: 600 }}>Confirm Command Execution</h3>
+              <ShieldAlert size={20} color="var(--accent-amber)" />
+              <h3 style={{ fontSize: '15px', fontWeight: 600 }}>Confirm Read-Only Check</h3>
             </div>
 
             <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Jarvis will execute this command inside your local user shell. Commands with root/sudo
-              elevation are disallowed.
+              Jarvis can run only the fixed, read-only system checks listed here. It cannot execute
+              generated commands or arbitrary shell text.
             </p>
 
             <div
@@ -204,7 +211,7 @@ export const JarvisApp: React.FC = () => {
               }}
             >
               <code className="font-mono" style={{ color: 'var(--accent-cyan)', fontSize: '12px' }}>
-                $ {confirmCommand}
+                {confirmCommand.label}
               </code>
             </div>
 
@@ -214,7 +221,7 @@ export const JarvisApp: React.FC = () => {
               </button>
               <button className="btn btn-primary" onClick={handleConfirmExecution}>
                 <Play size={13} />
-                <span>Run Command</span>
+                <span>Run Check</span>
               </button>
             </div>
           </div>
@@ -278,7 +285,7 @@ export const JarvisApp: React.FC = () => {
                     : msg.role === 'system'
                     ? 'rgba(255, 255, 255, 0.03)'
                     : 'rgba(255, 255, 255, 0.07)',
-                color: msg.role === 'user' ? '#090d16' : 'var(--text-primary)',
+                color: msg.role === 'user' ? 'var(--bg-primary)' : 'var(--text-primary)',
                 fontWeight: msg.role === 'user' ? 600 : 400,
                 fontSize: '13px',
                 border: msg.role === 'user' ? 'none' : '1px solid var(--border-subtle)',
@@ -292,7 +299,7 @@ export const JarvisApp: React.FC = () => {
                   style={{
                     marginTop: '8px',
                     padding: '8px 10px',
-                    background: '#090d16',
+                    background: 'var(--bg-primary)',
                     borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--border-medium)',
                     display: 'flex',
@@ -307,8 +314,8 @@ export const JarvisApp: React.FC = () => {
                         fontSize: '9px',
                         padding: '1px 5px',
                         borderRadius: '3px',
-                        background: 'rgba(245, 158, 11, 0.2)',
-                        color: '#fbbf24',
+                        background: 'color-mix(in srgb, var(--accent-amber) 18%, transparent)',
+                        color: 'var(--accent-amber)',
                         fontWeight: 600,
                         textTransform: 'uppercase',
                       }}
@@ -327,12 +334,12 @@ export const JarvisApp: React.FC = () => {
                       onClick={() => handleCopy(msg.suggestedCommand!, msg.id)}
                       title="Copy command"
                     >
-                      {copiedId === msg.id ? <Check size={11} color="#10b981" /> : <Copy size={11} />}
+                      {copiedId === msg.id ? <Check size={11} color="var(--status-online)" /> : <Copy size={11} />}
                     </button>
                     <button
                       className="btn btn-primary"
                       style={{ padding: '3px 8px', fontSize: '11px' }}
-                      onClick={() => setConfirmCommand(msg.suggestedCommand!)}
+                      onClick={() => msg.suggestedAction && setConfirmCommand({ action: msg.suggestedAction, label: msg.suggestedCommand! })}
                       title="Request execution"
                     >
                       <Play size={11} />
@@ -348,10 +355,12 @@ export const JarvisApp: React.FC = () => {
                   style={{
                     marginTop: '8px',
                     padding: '8px 10px',
-                    background: '#05080f',
+                    background: 'var(--bg-primary)',
                     borderRadius: 'var(--radius-md)',
                     border: `1px solid ${
-                      msg.executionResult.success ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)'
+                      msg.executionResult.success
+                        ? 'color-mix(in srgb, var(--status-online) 30%, transparent)'
+                        : 'color-mix(in srgb, var(--status-busy) 30%, transparent)'
                     }`,
                     fontSize: '11.5px',
                   }}
@@ -367,7 +376,7 @@ export const JarvisApp: React.FC = () => {
                     <span
                       style={{
                         fontWeight: 600,
-                        color: msg.executionResult.success ? '#34d399' : '#f87171',
+                        color: msg.executionResult.success ? 'var(--status-online)' : 'var(--status-busy)',
                       }}
                     >
                       {msg.executionResult.success ? 'Command Completed' : 'Command Error'}
@@ -395,14 +404,14 @@ export const JarvisApp: React.FC = () => {
                   {msg.executionResult.stderr && (
                     <pre
                       className="font-mono"
-                      style={{ whiteSpace: 'pre-wrap', color: '#fca5a5', fontSize: '11px' }}
+                      style={{ whiteSpace: 'pre-wrap', color: 'var(--status-busy)', fontSize: '11px' }}
                     >
                       {msg.executionResult.stderr}
                     </pre>
                   )}
 
                   {msg.executionResult.error && (
-                    <div style={{ color: '#fca5a5' }}>{msg.executionResult.error}</div>
+                    <div style={{ color: 'var(--status-busy)' }}>{msg.executionResult.error}</div>
                   )}
                 </div>
               )}

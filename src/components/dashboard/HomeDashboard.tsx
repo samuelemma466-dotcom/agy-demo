@@ -80,7 +80,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Status:</span>
-                <span style={{ color: phoneConnected ? '#34d399' : '#fbbf24' }}>
+                <span style={{ color: phoneConnected ? 'var(--status-online)' : 'var(--accent-amber)' }}>
                   {phoneConnected ? 'Paired (Simulated)' : 'Standby / Discovery'}
                 </span>
               </div>
@@ -128,7 +128,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldCheck size={16} color="#10b981" />
+            <ShieldCheck size={16} color="var(--status-online)" />
             <span>
               <strong>Safe Companion Mode:</strong> Running with zero root elevation. No system services or daemons auto-started.
             </span>

@@ -1,0 +1,11 @@
+--- a/.config/omarchy/shell.json
++++ b/.config/omarchy/shell.json
+@@ -62,5 +62,7 @@
+       ]
+     }
+   },
+-  "plugins": []
++  "plugins": [
++    { "id": "omachy-dock" }
++  ]
+ }

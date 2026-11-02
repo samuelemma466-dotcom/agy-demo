@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Python
+__pycache__/
+*.pyc
+
+# Android build output / machine-specific
+build/
+local.properties
+
+# Large downloaded binary tool
+/tools/*.bin
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

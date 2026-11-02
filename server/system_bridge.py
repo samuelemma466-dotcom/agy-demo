@@ -15,8 +15,48 @@ import subprocess
 import json
 from pathlib import Path
 
+from display_env import graphical_environment
+
 DROP_DIR = Path.home() / "Downloads" / "OmachyDrop"
-DROP_DIR.mkdir(parents=True, exist_ok=True)
+
+# Client-facing execution is intentionally limited to these fixed, read-only
+# argument vectors. Never accept a command string from a client or invoke a shell.
+ALLOWED_ACTIONS = {
+    "process_summary": ["ps", "-eo", "pid,comm,%cpu,%mem", "--sort=-%cpu"],
+    "disk_usage": ["df", "-h", "/"],
+    "network_interfaces": ["ip", "-br", "addr"],
+    "user_services": ["systemctl", "--user", "list-units", "--type=service", "--state=running", "--no-pager"],
+    "git_status": ["git", "-C", str(Path(__file__).resolve().parent.parent), "status", "-sb"],
+    "docker_containers": ["docker", "ps", "--format", "table {{.Names}}\t{{.Status}}\t{{.Ports}}"],
+}
+
+
+def run_allowed_action(action: str):
+    """Run one explicitly permitted read-only action with a fixed argv."""
+    argv = ALLOWED_ACTIONS.get(action)
+    if argv is None:
+        return {"success": False, "error": "Action is not permitted."}
+    if not shutil.which(argv[0]):
+        return {"success": False, "error": f"Required program is unavailable: {argv[0]}"}
+    try:
+        proc = subprocess.run(
+            argv,
+            shell=False,
+            text=True,
+            capture_output=True,
+            timeout=8,
+            cwd=str(Path.home()),
+        )
+        return {
+            "success": proc.returncode == 0,
+            "returncode": proc.returncode,
+            "stdout": proc.stdout[:16000],
+            "stderr": proc.stderr[:4000],
+        }
+    except subprocess.TimeoutExpired:
+        return {"success": False, "error": "Action timed out after 8 seconds."}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 
 def get_wifi_status():
@@ -278,40 +318,25 @@ def get_drop_files():
 
 def open_drop_folder():
     """Opens ~/Downloads/OmachyDrop in the default desktop file manager."""
-    if shutil.which("xdg-open"):
-        subprocess.Popen(["xdg-open", str(DROP_DIR)])
-        return {"success": True, "path": str(DROP_DIR)}
-    return {"success": False, "error": "xdg-open not available"}
-
-
-def execute_jarvis_command(cmd: str):
-    """Executes a confirmed command in the user shell safely with a timeout."""
-    # Prevent sudo or root commands per safety rule
-    if cmd.strip().startswith("sudo "):
-        return {
-            "success": False,
-            "error": "Execution of sudo commands is prohibited by safety policy.",
-        }
-
+    DROP_DIR.mkdir(parents=True, exist_ok=True)
+    opener = shutil.which("xdg-open")
+    if not opener:
+        return {"success": False, "error": "xdg-open not available"}
+    # Some Omarchy sessions set a forced GDK_BACKEND list for embedded GTK
+    # windows. Don't pass that override to the separate file-manager process;
+    # it can prevent Nautilus from initializing its Wayland display/portals.
+    child_env = graphical_environment()
+    child_env.pop("GDK_BACKEND", None)
     try:
-        proc = subprocess.run(
-            cmd,
-            shell=True,
-            text=True,
-            capture_output=True,
-            timeout=8,
-            cwd=str(Path.home()),
+        subprocess.Popen(
+            [opener, str(DROP_DIR)],
+            env=child_env,
+            start_new_session=True,
+            close_fds=True,
         )
-        return {
-            "success": proc.returncode == 0,
-            "returncode": proc.returncode,
-            "stdout": proc.stdout,
-            "stderr": proc.stderr,
-        }
-    except subprocess.TimeoutExpired:
-        return {"success": False, "error": "Command timed out after 8 seconds."}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+        return {"success": True, "path": str(DROP_DIR)}
+    except OSError as exc:
+        return {"success": False, "error": f"Could not start the file manager: {exc}"}
 
 
 def collect_system_summary():

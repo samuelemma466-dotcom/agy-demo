@@ -1,67 +1,58 @@
 :root {
-  /* Color Palette - Modern Deep Obsidian & Slate (Original Identity, No Apple Assets) */
-  --bg-primary: #0a0d14;
-  --bg-secondary: #0f1420;
-  --bg-surface: #151c2c;
-  --bg-surface-elevated: #1a2336;
-  --bg-glass: rgba(18, 24, 38, 0.72);
-  --bg-glass-heavy: rgba(12, 17, 28, 0.88);
-  --bg-glass-input: rgba(22, 30, 48, 0.6);
+  /* Omachy Studio palette: shared by every embedded Omachy application. */
+  --bg-primary: #0b1119;
+  --bg-secondary: #101923;
+  --bg-surface: #16212d;
+  --bg-surface-elevated: #1b2936;
+  --bg-glass: rgba(16, 25, 35, 0.88);
+  --bg-glass-heavy: rgba(13, 20, 29, 0.96);
+  --bg-glass-input: rgba(31, 45, 58, 0.72);
 
-  /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(56, 189, 248, 0.4);
+  --border-subtle: rgba(229, 237, 243, 0.08);
+  --border-medium: rgba(229, 237, 243, 0.14);
+  --border-active: rgba(143, 191, 224, 0.42);
 
-  /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-inverse: #090d16;
+  --text-primary: #e5edf3;
+  --text-secondary: #b4c1ca;
+  --text-muted: #82929e;
+  --text-inverse: #0b1119;
 
-  /* Accent Colors */
-  --accent-cyan: #38bdf8;
-  --accent-cyan-rgb: 56, 189, 248;
-  --accent-blue: #3b82f6;
-  --accent-indigo: #6366f1;
-  --accent-purple: #a855f7;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
-
-  /* Current Active Accent (defaults to Cyan/Neon Blue companion) */
+  /* Keep the existing component token names while giving them the Studio palette. */
+  --accent-cyan: #8fbfe0;
+  --accent-cyan-rgb: 143, 191, 224;
+  --accent-blue: #81afe0;
+  --accent-indigo: #9a9bc7;
+  --accent-purple: #b5a0d5;
+  --accent-emerald: #88b99a;
+  --accent-amber: #d6b77f;
+  --accent-rose: #c9827e;
   --accent-active: var(--accent-cyan);
   --accent-active-rgb: var(--accent-cyan-rgb);
 
-  /* Status Colors */
-  --status-online: #10b981;
-  --status-idle: #f59e0b;
-  --status-offline: #64748b;
-  --status-busy: #f43f5e;
+  --status-online: #88b99a;
+  --status-idle: #d6b77f;
+  --status-offline: #71818d;
+  --status-busy: #c9827e;
 
-  /* Layout & Sizing */
   --sidebar-width: 250px;
   --sidebar-width-collapsed: 76px;
   --header-height: 60px;
   --dock-height: 72px;
 
-  /* Glassmorphism & Elevation */
-  --blur-glass: blur(18px);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --shadow-dock: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 1px rgba(255, 255, 255, 0.15) inset;
-  --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.25);
+  --blur-glass: blur(16px);
+  --shadow-sm: 0 2px 8px rgba(3, 8, 14, 0.24);
+  --shadow-md: 0 10px 28px rgba(3, 8, 14, 0.34);
+  --shadow-lg: 0 18px 44px rgba(3, 8, 14, 0.48);
+  --shadow-dock: 0 12px 32px rgba(3, 8, 14, 0.48), 0 0 1px rgba(229, 237, 243, 0.18) inset;
+  --shadow-glow: 0 0 18px rgba(143, 191, 224, 0.16);
 
-  /* Radii */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 22px;
   --radius-full: 9999px;
 
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-normal: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-bounce: 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }

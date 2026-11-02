@@ -117,7 +117,7 @@ export const ControlCenterApp: React.FC = () => {
       style={{
         width: '100%',
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 10% 10%, #151c2c 0%, #0a0d14 100%)',
+        background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
         color: 'var(--text-primary)',
         padding: '16px',
         display: 'flex',
@@ -168,7 +168,7 @@ export const ControlCenterApp: React.FC = () => {
         {/* Wi-Fi Card */}
         <div
           style={{
-            background: wifi?.enabled ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+            background: wifi?.enabled ? 'color-mix(in srgb, var(--accent-active) 12%, transparent)' : 'rgba(255, 255, 255, 0.03)',
             border: `1px solid ${wifi?.enabled ? 'var(--border-active)' : 'var(--border-subtle)'}`,
             borderRadius: 'var(--radius-lg)',
             padding: '12px',
@@ -191,7 +191,7 @@ export const ControlCenterApp: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: wifi?.enabled ? '#090d16' : 'var(--text-muted)',
+                color: wifi?.enabled ? 'var(--bg-primary)' : 'var(--text-muted)',
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -224,10 +224,10 @@ export const ControlCenterApp: React.FC = () => {
         <div
           style={{
             background: bluetooth?.powered
-              ? 'rgba(99, 102, 241, 0.12)'
+              ? 'color-mix(in srgb, var(--accent-indigo) 12%, transparent)'
               : 'rgba(255, 255, 255, 0.03)',
             border: `1px solid ${
-              bluetooth?.powered ? 'rgba(99, 102, 241, 0.35)' : 'var(--border-subtle)'
+              bluetooth?.powered ? 'color-mix(in srgb, var(--accent-indigo) 35%, transparent)' : 'var(--border-subtle)'
             }`,
             borderRadius: 'var(--radius-lg)',
             padding: '12px',
@@ -250,7 +250,7 @@ export const ControlCenterApp: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: bluetooth?.powered ? '#ffffff' : 'var(--text-muted)',
+                color: bluetooth?.powered ? 'var(--text-primary)' : 'var(--text-muted)',
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -268,7 +268,7 @@ export const ControlCenterApp: React.FC = () => {
             <div
               style={{
                 fontSize: '11px',
-                color: bluetooth?.powered ? '#818cf8' : 'var(--text-muted)',
+                color: bluetooth?.powered ? 'var(--accent-indigo)' : 'var(--text-muted)',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -331,7 +331,7 @@ export const ControlCenterApp: React.FC = () => {
                     padding: '6px 8px',
                     borderRadius: 'var(--radius-sm)',
                     background: net.active
-                      ? 'rgba(56, 189, 248, 0.15)'
+                      ? 'color-mix(in srgb, var(--accent-active) 15%, transparent)'
                       : 'rgba(255, 255, 255, 0.02)',
                     fontSize: '12px',
                   }}
@@ -423,7 +423,7 @@ export const ControlCenterApp: React.FC = () => {
             onClick={handleToggleMute}
             title="Toggle Mute"
           >
-            {muted ? <VolumeX size={15} color="#f43f5e" /> : <Volume2 size={15} />}
+            {muted ? <VolumeX size={15} color="var(--status-busy)" /> : <Volume2 size={15} />}
           </button>
         </div>
 
@@ -443,7 +443,7 @@ export const ControlCenterApp: React.FC = () => {
               fontSize: '11px',
               minWidth: '32px',
               textAlign: 'right',
-              color: muted ? '#f43f5e' : 'var(--text-secondary)',
+              color: muted ? 'var(--status-busy)' : 'var(--text-secondary)',
             }}
           >
             {muted ? 'MUTE' : `${volume}%`}
@@ -460,11 +460,11 @@ export const ControlCenterApp: React.FC = () => {
             flexDirection: 'column',
             padding: '10px 6px',
             gap: '6px',
-            background: dndActive ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-            borderColor: dndActive ? 'rgba(244, 63, 94, 0.35)' : 'var(--border-subtle)',
+            background: dndActive ? 'color-mix(in srgb, var(--status-busy) 15%, transparent)' : 'rgba(255, 255, 255, 0.03)',
+            borderColor: dndActive ? 'color-mix(in srgb, var(--status-busy) 35%, transparent)' : 'var(--border-subtle)',
           }}
         >
-          {dndActive ? <BellOff size={16} color="#f43f5e" /> : <Bell size={16} />}
+          {dndActive ? <BellOff size={16} color="var(--status-busy)" /> : <Bell size={16} />}
           <span style={{ fontSize: '10.5px' }}>{dndActive ? 'DND On' : 'Do Not Disturb'}</span>
         </button>
 

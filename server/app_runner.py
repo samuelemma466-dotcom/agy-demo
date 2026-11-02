@@ -6,7 +6,7 @@ Uses PyGObject + Gtk 3 + WebKit2 4.1 to open standalone native Wayland/X11 windo
 import sys
 import os
 import argparse
-import threading
+import subprocess
 import time
 import urllib.request
 from pathlib import Path
@@ -69,8 +69,17 @@ APP_CONFIGS = {
 
 def is_service_running(port=PORT):
     try:
-        urllib.request.urlopen(f"http://127.0.0.1:{port}/api/system/status", timeout=0.8)
-        return True
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=0.8) as response:
+            if response.status != 200:
+                return False
+            content_type = response.headers.get("Content-Type", "")
+            body = response.read(4096)
+            # Older Omachy daemons don't have /health and return the SPA shell
+            # for unknown paths. Recognize that shell to avoid starting a second
+            # daemon on its occupied port.
+            if content_type.startswith("application/json"):
+                return b'"ok": true' in body
+            return content_type.startswith("text/html") and b"Omachy Desktop" in body
     except Exception:
         return False
 
@@ -79,15 +88,34 @@ def start_service_in_background(port=PORT):
     if is_service_running(port):
         return
 
-    from service import run_service
-    thread = threading.Thread(target=run_service, args=(port,), daemon=True)
-    thread.start()
+    state_home = os.environ.get("XDG_STATE_HOME")
+    state_dir = (Path(state_home) if state_home and os.path.isabs(state_home)
+                 else Path.home() / ".local" / "state") / "omachy"
+    state_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+    log_path = state_dir / "service.log"
+    log_fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    os.chmod(log_path, 0o600)
+    service_process = None
+    with os.fdopen(log_fd, "ab", buffering=0) as service_log:
+        service_process = subprocess.Popen(
+            [sys.executable, str(SERVER_SCRIPT), str(port)],
+            cwd=str(SERVER_SCRIPT.parent),
+            stdin=subprocess.DEVNULL,
+            stdout=service_log,
+            stderr=subprocess.STDOUT,
+            close_fds=True,
+            start_new_session=True,
+        )
 
-    # Wait briefly for daemon startup
+    # The service is independent of either GTK window, so closing Connect
+    # doesn't unexpectedly break Drop while it remains open.
     for _ in range(15):
         if is_service_running(port):
+            return
+        if service_process.poll() is not None:
             break
         time.sleep(0.1)
+    raise RuntimeError(f"Omachy local service failed to start; see {log_path}")
 
 
 class OmachyWindow(Gtk.Window):
@@ -97,7 +125,11 @@ class OmachyWindow(Gtk.Window):
 
         self.set_default_size(config["width"], config["height"])
         self.set_resizable(config["resizable"])
-        self.set_wmclass(config["app_id"], config["app_id"])
+        display = Gdk.Display.get_default()
+        # WM_CLASS is an X11 concept and deprecated by GTK on Wayland. Keep
+        # the existing class for X11 window matching without warning on Hyprland.
+        if display and "wayland" not in display.get_name().lower():
+            self.set_wmclass(config["app_id"], config["app_id"])
         self.set_role(config["app_id"])
 
         # Try to load icon

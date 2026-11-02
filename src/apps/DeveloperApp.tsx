@@ -29,18 +29,18 @@ export const DeveloperApp: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleRunPreset = async (cmd: string) => {
+  const handleRunPreset = async (actionId: string, label: string) => {
     setRunning(true);
-    setExecutionOutput({ cmd, output: 'Running command...' });
+    setExecutionOutput({ cmd: label, output: 'Running permitted read-only action...' });
     try {
-      const res = await systemApi.executeJarvisCommand(cmd);
+      const res = await systemApi.runAllowedAction(actionId);
       setExecutionOutput({
-        cmd,
+        cmd: label,
         output: res.stdout || res.stderr || (res.success ? 'Success (no output)' : 'Failed to execute'),
       });
     } catch (e: unknown) {
-      const errorMsg = e instanceof Error ? e.message : 'Error executing command';
-      setExecutionOutput({ cmd, output: errorMsg });
+      const errorMsg = e instanceof Error ? e.message : 'Error running permitted action';
+      setExecutionOutput({ cmd: label, output: errorMsg });
     } finally {
       setRunning(false);
     }
@@ -51,7 +51,7 @@ export const DeveloperApp: React.FC = () => {
       style={{
         width: '100%',
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 10% 10%, #151c2c 0%, #0a0d14 100%)',
+        background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
         color: 'var(--text-primary)',
         padding: '20px',
         display: 'flex',
@@ -148,7 +148,7 @@ export const DeveloperApp: React.FC = () => {
                     onClick={() => handleCopy(proj.path, proj.id)}
                     title="Copy path"
                   >
-                    {copiedId === proj.id ? <Check size={11} color="#10b981" /> : <Copy size={11} />}
+                    {copiedId === proj.id ? <Check size={11} color="var(--status-online)" /> : <Copy size={11} />}
                   </button>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export const DeveloperApp: React.FC = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontWeight: 600, fontSize: '13.5px' }}>Terminal Presets</span>
+            <span style={{ fontWeight: 600, fontSize: '13.5px' }}>Read-only System Checks</span>
             <div style={{ display: 'flex', gap: '4px' }}>
               {categories.map((cat) => (
                 <button
@@ -179,7 +179,7 @@ export const DeveloperApp: React.FC = () => {
                     fontSize: '10px',
                     padding: '2px 7px',
                     borderRadius: 'var(--radius-full)',
-                    background: activeCategory === cat ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                    background: activeCategory === cat ? 'color-mix(in srgb, var(--accent-active) 15%, transparent)' : 'transparent',
                     color: activeCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
                   }}
                   onClick={() => setActiveCategory(cat)}
@@ -219,14 +219,14 @@ export const DeveloperApp: React.FC = () => {
                     onClick={() => handleCopy(preset.command, preset.id)}
                     title="Copy command"
                   >
-                    {copiedId === preset.id ? <Check size={11} color="#10b981" /> : <Copy size={11} />}
+                    {copiedId === preset.id ? <Check size={11} color="var(--status-online)" /> : <Copy size={11} />}
                   </button>
                   <button
                     className="btn btn-primary"
                     style={{ padding: '4px 8px', fontSize: '11px' }}
-                    onClick={() => handleRunPreset(preset.command)}
+                    onClick={() => handleRunPreset(preset.actionId, preset.title)}
                     disabled={running}
-                    title="Run preset"
+                    title="Run permitted check"
                   >
                     <Play size={11} />
                   </button>
@@ -241,7 +241,7 @@ export const DeveloperApp: React.FC = () => {
               style={{
                 marginTop: '10px',
                 padding: '10px',
-                background: '#090d16',
+                background: 'var(--bg-primary)',
                 border: '1px solid var(--border-medium)',
                 borderRadius: 'var(--radius-md)',
               }}

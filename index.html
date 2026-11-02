@@ -5,16 +5,14 @@
     <link rel="icon" type="image/svg+xml" href="/omachy-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Omachy Desktop — Linux Desktop Companion</title>
-    <!-- Modern typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main style="min-height:100vh;padding:24px;background:#0b1119;color:#e5edf3;font:14px/1.5 sans-serif">
+        <h1 style="font-size:18px">Omachy is starting…</h1>
+        <p>If this message stays here, the application JavaScript did not start. Check the app runner terminal for WebKit errors.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

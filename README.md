@@ -45,27 +45,31 @@ flowchart TD
    - One-click shortcuts for Do Not Disturb, Jarvis, Drop, and Suite.
 
 2. **Omachy Connect** (`omachy connect`):
-   - Phone pairing and convergence hub.
-   - Real KDE Connect detection: reports whether `kdeconnect-cli` is active or missing, with clear fallback instructions.
-   - PIN verification simulation, Wi-Fi discovery scan, and feature toggles.
+   - Starts an explicit five-minute TLS-pinned phone pairing session on the selected Wi-Fi address and stable TCP port 32975.
+   - Shows the QR, approves phone requests, and shares the paired session with Omachy Drop.
 
 3. **Omachy Drop** (`omachy drop`):
-   - Real file transfer and staging tool.
-   - Drag-and-drop or select any real file on your system to stage it into `~/Downloads/OmachyDrop/`.
-   - Real file list with file sizes and timestamps.
-   - One-click button to open `~/Downloads/OmachyDrop/` in the system file manager via `xdg-open`.
+   - Handles approved phone-to-computer and computer-to-phone transfers for the active Connect session.
+   - Shows offers, progress, cancellation, and SHA-256 verification status.
+   - Received files are saved in `~/Downloads/OmachyDrop/`; the window can open that folder.
+
+Connect and Drop use one local loopback service. The service runs as a separate,
+unprivileged user process so closing the window that started it doesn't break
+the other window. Its log is stored at `~/.local/state/omachy/service.log`
+(or `$XDG_STATE_HOME/omachy/service.log`). The phone listener is separate,
+TLS-pinned, bound only to the selected Wi-Fi address on TCP port 32975, and expires after five
+minutes. No firewall rules or privileged listeners are created automatically.
 
 4. **Omachy Jarvis** (`omachy jarvis`):
-   - Interactive intelligent shell assistant.
-   - Distinguishes **Suggestions** (read-only AI recommendations) from **Executed Commands**.
-   - Confirmation dialog before running any command: *"Are you sure you want to run this in your user shell?"*
-   - Root / `sudo` execution prohibited by safety policy.
-   - Displays real exit code, stdout, and stderr.
+   - Assistant interface for a small allowlist of fixed, read-only system checks.
+   - The local service rejects arbitrary command strings and does not invoke a shell.
+   - A confirmation prompt is provided in the app; the server independently enforces the action allowlist.
+   - Displays the real exit code, stdout, and stderr for an allowed check.
 
 5. **Omachy Developer Tools** (`omachy developer`):
    - Workspace repository browser with Git branch badges and path copying.
-   - Presets for common Linux commands (`ps aux`, `df -h`, `ip -br addr`, `systemctl --user`).
-   - Real output capture box.
+   - Buttons run named, read-only system actions with fixed argument lists.
+   - The server rejects unknown actions and unexpected request parameters.
 
 6. **Omachy Suite Launcher** (`omachy suite`):
    - Hub to launch any of the standalone windows independently.

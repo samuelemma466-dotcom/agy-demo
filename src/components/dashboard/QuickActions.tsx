@@ -68,11 +68,11 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
             flexDirection: 'column',
             padding: '12px 10px',
             gap: '8px',
-            background: dndActive ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-            borderColor: dndActive ? 'rgba(244, 63, 94, 0.35)' : 'var(--border-subtle)',
+            background: dndActive ? 'color-mix(in srgb, var(--status-busy) 15%, transparent)' : 'rgba(255, 255, 255, 0.03)',
+            borderColor: dndActive ? 'color-mix(in srgb, var(--status-busy) 35%, transparent)' : 'var(--border-subtle)',
           }}
         >
-          {dndActive ? <BellOff size={20} color="#f43f5e" /> : <Bell size={20} />}
+          {dndActive ? <BellOff size={20} color="var(--status-busy)" /> : <Bell size={20} />}
           <span style={{ fontSize: '12px', fontWeight: 500 }}>
             {dndActive ? 'DND Active' : 'Do Not Disturb'}
           </span>
@@ -84,7 +84,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
           onClick={handleCopyIp}
           style={{ flexDirection: 'column', padding: '12px 10px', gap: '8px' }}
         >
-          {copiedIp ? <Check size={20} color="#10b981" /> : <Copy size={20} />}
+          {copiedIp ? <Check size={20} color="var(--status-online)" /> : <Copy size={20} />}
           <span style={{ fontSize: '12px', fontWeight: 500 }}>
             {copiedIp ? 'IP Copied' : 'Copy Local IP'}
           </span>

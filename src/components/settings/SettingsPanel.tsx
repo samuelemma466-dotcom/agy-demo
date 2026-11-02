@@ -18,6 +18,7 @@ interface AccentOption {
 }
 
 const ACCENT_OPTIONS: AccentOption[] = [
+  { name: 'Studio Blue', color: '#8fbfe0', rgb: '143, 191, 224' },
   { name: 'Neon Cyan', color: '#38bdf8', rgb: '56, 189, 248' },
   { name: 'Electric Blue', color: '#3b82f6', rgb: '59, 130, 246' },
   { name: 'Hyper Indigo', color: '#6366f1', rgb: '99, 102, 241' },
@@ -28,7 +29,7 @@ const ACCENT_OPTIONS: AccentOption[] = [
 ];
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification }) => {
-  const [selectedAccent, setSelectedAccent] = useState<string>('#38bdf8');
+  const [selectedAccent, setSelectedAccent] = useState<string>('#8fbfe0');
   const [enableAnimations, setEnableAnimations] = useState(true);
   const [glassTransparency, setGlassTransparency] = useState(72);
 
@@ -72,7 +73,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
                           height: '32px',
                           borderRadius: '50%',
                           background: accent.color,
-                          border: isSelected ? '3px solid #ffffff' : '2px solid transparent',
+                          border: isSelected ? '3px solid var(--text-primary)' : '2px solid transparent',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -81,7 +82,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
                           transition: 'transform var(--transition-fast)',
                         }}
                       >
-                        {isSelected && <Check size={14} color="#000000" strokeWidth={3} />}
+                        {isSelected && <Check size={14} color="var(--text-inverse)" strokeWidth={3} />}
                       </button>
                     );
                   })}
@@ -104,7 +105,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
                     setGlassTransparency(val);
                     document.documentElement.style.setProperty(
                       '--bg-glass',
-                      `rgba(18, 24, 38, ${val / 100})`
+                      `rgba(16, 25, 35, ${val / 100})`
                     );
                   }}
                   style={{ width: '100%', accentColor: 'var(--accent-active)' }}
@@ -142,7 +143,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
           <div className="card">
             <div className="card-header">
               <div className="card-title">
-                <ShieldCheck size={18} color="#10b981" />
+                <ShieldCheck size={18} color="var(--status-online)" />
                 <span>Companion Safety & Shortcuts</span>
               </div>
             </div>
@@ -179,20 +180,20 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: 'var(--radius-md)',
-                  background: 'rgba(244, 63, 94, 0.05)',
-                  border: '1px solid rgba(244, 63, 94, 0.2)',
+                  background: 'color-mix(in srgb, var(--status-busy) 5%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--status-busy) 20%, transparent)',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 500, color: '#fca5a5', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--status-busy)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Lock size={13} />
                     <span>Auto-Start on Boot (Disabled)</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#f87171' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--status-busy)' }}>
                     Disabled by safety guidelines. No background daemons auto-registered.
                   </div>
                 </div>
-                <span className="badge" style={{ background: 'rgba(244, 63, 94, 0.2)', color: '#fca5a5' }}>
+                <span className="badge" style={{ background: 'color-mix(in srgb, var(--status-busy) 20%, transparent)', color: 'var(--status-busy)' }}>
                   Locked
                 </span>
               </div>
@@ -205,15 +206,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onShowNotification
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: 'var(--radius-md)',
-                  background: 'rgba(16, 185, 129, 0.05)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  background: 'color-mix(in srgb, var(--status-online) 5%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--status-online) 20%, transparent)',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 500, color: '#6ee7b7' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--status-online)' }}>
                     Non-Root Execution
                   </div>
-                  <div style={{ fontSize: '11px', color: '#a7f3d0' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--status-online)' }}>
                     Application runs completely within regular user permissions.
                   </div>
                 </div>

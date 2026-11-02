@@ -52,7 +52,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
       <div
         className="card"
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%)',
+          background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-secondary) 100%)',
           padding: '16px 20px',
         }}
       >
@@ -63,7 +63,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
                 width: '40px',
                 height: '40px',
                 borderRadius: 'var(--radius-md)',
-                background: 'rgba(56, 189, 248, 0.15)',
+                background: 'color-mix(in srgb, var(--accent-active) 15%, transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -126,9 +126,9 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
                         style={{
                           background:
                             proj.status === 'clean'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : 'rgba(245, 158, 11, 0.15)',
-                          color: proj.status === 'clean' ? '#34d399' : '#fbbf24',
+                              ? 'color-mix(in srgb, var(--status-online) 15%, transparent)'
+                              : 'color-mix(in srgb, var(--accent-amber) 15%, transparent)',
+                          color: proj.status === 'clean' ? 'var(--status-online)' : 'var(--accent-amber)',
                           fontSize: '10px',
                         }}
                       >
@@ -163,7 +163,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
                       onClick={() => handleCopyPath(proj)}
                       title="Copy directory path"
                     >
-                      {copiedPathId === proj.id ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+                      {copiedPathId === proj.id ? <Check size={12} color="var(--status-online)" /> : <Copy size={12} />}
                     </button>
                   </div>
 
@@ -224,7 +224,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
                     padding: '4px 10px',
                     borderRadius: 'var(--radius-full)',
                     background:
-                      activeCategory === cat ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                      activeCategory === cat ? 'color-mix(in srgb, var(--accent-active) 15%, transparent)' : 'rgba(255, 255, 255, 0.04)',
                     color: activeCategory === cat ? 'var(--accent-cyan)' : 'var(--text-muted)',
                   }}
                   onClick={() => setActiveCategory(cat)}
@@ -294,7 +294,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
                       title="Copy command to clipboard"
                     >
                       {copiedCmdId === preset.id ? (
-                        <Check size={12} color="#10b981" />
+                        <Check size={12} color="var(--status-online)" />
                       ) : (
                         <Copy size={12} />
                       )}

@@ -13,7 +13,7 @@ html, body {
   overflow: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Noto Sans', 'Segoe UI', sans-serif;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 code, pre, .font-mono {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace;
 }
 
 button {
@@ -102,25 +102,25 @@ input, textarea, select {
 }
 
 .badge-demo {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: color-mix(in srgb, var(--accent-amber) 14%, transparent);
+  color: var(--accent-amber);
+  border: 1px solid color-mix(in srgb, var(--accent-amber) 30%, transparent);
 }
 
 .badge-online {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: color-mix(in srgb, var(--status-online) 14%, transparent);
+  color: var(--status-online);
+  border: 1px solid color-mix(in srgb, var(--status-online) 30%, transparent);
 }
 
 .badge-offline {
-  background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: color-mix(in srgb, var(--status-offline) 14%, transparent);
+  color: var(--text-secondary);
+  border: 1px solid color-mix(in srgb, var(--status-offline) 30%, transparent);
 }
 
 .badge-primary {
-  background: rgba(56, 189, 248, 0.15);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: color-mix(in srgb, var(--accent-active) 14%, transparent);
+  color: var(--accent-active);
+  border: 1px solid color-mix(in srgb, var(--accent-active) 30%, transparent);
 }

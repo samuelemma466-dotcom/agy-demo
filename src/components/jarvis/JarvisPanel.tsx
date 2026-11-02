@@ -184,7 +184,7 @@ export const JarvisPanel: React.FC<JarvisPanelProps> = ({
                         <code
                           className="font-mono"
                           style={{
-                            color: '#38bdf8',
+                            color: 'var(--accent-active)',
                             fontSize: '12.5px',
                             wordBreak: 'break-all',
                           }}
@@ -208,7 +208,7 @@ export const JarvisPanel: React.FC<JarvisPanelProps> = ({
                             title="Copy command to clipboard"
                           >
                             {copiedId === msg.id ? (
-                              <Check size={12} color="#10b981" />
+                              <Check size={12} color="var(--status-online)" />
                             ) : (
                               <Copy size={12} />
                             )}

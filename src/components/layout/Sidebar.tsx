@@ -80,11 +80,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   style={{
                     background:
                       item.id === 'phone' && phoneConnected
-                        ? 'rgba(16, 185, 129, 0.2)'
+                        ? 'color-mix(in srgb, var(--status-online) 20%, transparent)'
                         : 'rgba(255, 255, 255, 0.08)',
                     color:
                       item.id === 'phone' && phoneConnected
-                        ? '#34d399'
+                        ? 'var(--status-online)'
                         : 'var(--text-secondary)',
                     fontSize: '10px',
                     padding: '2px 6px',
@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             padding: '2px 8px',
           }}
         >
-          <ShieldCheck size={13} color="#10b981" />
+          <ShieldCheck size={13} color="var(--status-online)" />
           <span>No root elevation required</span>
         </div>
       </div>

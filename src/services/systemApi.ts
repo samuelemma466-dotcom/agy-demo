@@ -65,6 +65,38 @@ export interface DropFile {
   path: string;
 }
 
+export interface PhoneSessionState {
+  active: boolean;
+  address?: string;
+  port?: number;
+  protocol?: number;
+  fingerprint_sha256?: string;
+  pairing_token?: string | null;
+  qr_png_base64?: string;
+  persistent?: boolean;
+  expires_at?: number;
+  pending: Array<{ id: string; device_name: string }>;
+  devices: Array<{ name: string; connected_at: number; auto_accept?: boolean }>;
+  transfers?: TransferRecord[];
+}
+
+export interface TransferRecord {
+  id: string;
+  name: string;
+  size: number;
+  direction: 'phone_to_desktop' | 'desktop_to_phone';
+  status: 'offered' | 'accepted' | 'source_uploading' | 'transferring' | 'awaiting_verification' | 'completed' | 'rejected' | 'canceled' | 'failed';
+  bytes_transferred: number;
+  source_bytes?: number;
+  progress: number;
+  sha256?: string | null;
+  created_at: number;
+  mtime?: number | null;
+  device_name: string;
+  error?: string | null;
+  saved_path?: string;
+}
+
 export interface JarvisExecResult {
   success: boolean;
   returncode?: number;
@@ -126,9 +158,128 @@ export const systemApi = {
     return res.json();
   },
 
+  async getPhoneInterfaces(): Promise<{ interfaces: Array<{ interface: string; address: string; wireless?: boolean }>; error?: string }> {
+    const res = await fetch(`${API_BASE}/api/connect/interfaces`);
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async getPhoneSession(): Promise<PhoneSessionState> {
+    const res = await fetch(`${API_BASE}/api/connect/session`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    return res.json();
+  },
+
+  async getTransfers(): Promise<{ transfers: TransferRecord[] }> {
+    const res = await fetch(`${API_BASE}/api/drop/transfers`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    return res.json();
+  },
+
+  async createDesktopTransfer(name: string, size: number, deviceName: string): Promise<TransferRecord> {
+    const res = await fetch(`${API_BASE}/api/drop/transfers`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, size, device_name: deviceName }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async uploadDesktopSourceChunk(id: string, start: number, total: number, chunk: Blob): Promise<TransferRecord> {
+    const res = await fetch(`${API_BASE}/api/drop/transfers/${encodeURIComponent(id)}/source`, {
+      method: 'POST', headers: {
+        'Content-Type': 'application/octet-stream',
+        'X-Omachy-Chunk-Start': String(start),
+        'X-Omachy-File-Size': String(total),
+      }, body: chunk,
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async decideTransfer(id: string, accepted: boolean): Promise<TransferRecord> {
+    const res = await fetch(`${API_BASE}/api/drop/transfers/${encodeURIComponent(id)}/decision`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accepted }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async cancelTransfer(id: string): Promise<TransferRecord> {
+    const res = await fetch(`${API_BASE}/api/drop/transfers/${encodeURIComponent(id)}/cancel`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async startPhoneSession(address: string, persistent = true): Promise<PhoneSessionState> {
+    const res = await fetch(`${API_BASE}/api/connect/session/start`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address, persistent }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async stopPhoneSession(): Promise<PhoneSessionState> {
+    const res = await fetch(`${API_BASE}/api/connect/session/stop`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async decidePhonePairing(requestId: string, approved: boolean): Promise<PhoneSessionState> {
+    const res = await fetch(`${API_BASE}/api/connect/pairing/decision`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ request_id: requestId, approved }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async forgetDevice(name: string): Promise<PhoneSessionState> {
+    const res = await fetch(`${API_BASE}/api/connect/devices/forget`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
+  },
+
+  async setDeviceAutoAccept(name: string, autoAccept: boolean): Promise<Array<{ name: string; auto_accept?: boolean }>> {
+    const res = await fetch(`${API_BASE}/api/connect/devices/auto-accept`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, auto_accept: autoAccept }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result.devices ?? [];
+  },
+
+  async listDevices(): Promise<Array<{ name: string }>> {
+    const res = await fetch(`${API_BASE}/api/connect/devices`, { method: 'GET' });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result.devices ?? [];
+  },
+
   async openDropFolder(): Promise<{ success: boolean; path?: string }> {
     const res = await fetch(`${API_BASE}/api/drop/open-folder`, { method: 'POST' });
-    return res.json();
+    const result = await res.json();
+    if (!res.ok || !result.success) throw new Error(result.error || `HTTP error ${res.status}`);
+    return result;
   },
 
   async stageDropFile(filename: string, content: string): Promise<{ success: boolean; path: string }> {
@@ -140,11 +291,11 @@ export const systemApi = {
     return res.json();
   },
 
-  async executeJarvisCommand(command: string): Promise<JarvisExecResult> {
-    const res = await fetch(`${API_BASE}/api/jarvis/execute`, {
+  async runAllowedAction(action: string): Promise<JarvisExecResult> {
+    const res = await fetch(`${API_BASE}/api/actions/run`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command }),
+      body: JSON.stringify({ action }),
     });
     return res.json();
   },

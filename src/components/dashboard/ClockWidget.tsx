@@ -31,7 +31,7 @@ export const ClockWidget: React.FC = () => {
     <div
       className="card"
       style={{
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.6) 100%)',
+        background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-secondary) 100%)',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -44,7 +44,7 @@ export const ClockWidget: React.FC = () => {
           width: '180px',
           height: '180px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, color-mix(in srgb, var(--accent-active) 12%, transparent) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />

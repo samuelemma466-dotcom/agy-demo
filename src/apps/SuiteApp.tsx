@@ -50,7 +50,7 @@ export const SuiteApp: React.FC<SuiteAppProps> = ({ onOpenReferenceCompanion }) 
     {
       id: 'jarvis',
       title: 'Omachy Jarvis',
-      description: 'AI assistant distinguishing suggestions from confirmed shell executions',
+      description: 'Assistant with a small set of fixed, read-only system checks',
       icon: Bot,
       accent: 'var(--accent-amber)',
       shortcut: 'Shell Assistant',
@@ -58,7 +58,7 @@ export const SuiteApp: React.FC<SuiteAppProps> = ({ onOpenReferenceCompanion }) 
     {
       id: 'developer',
       title: 'Omachy Developer Tools',
-      description: 'Workspace project repositories, Git branch status, and terminal presets',
+      description: 'Workspace project repositories and fixed, read-only system checks',
       icon: Terminal,
       accent: 'var(--accent-rose)',
       shortcut: 'Dev Hub',
@@ -74,7 +74,7 @@ export const SuiteApp: React.FC<SuiteAppProps> = ({ onOpenReferenceCompanion }) 
       style={{
         width: '100%',
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 10% 20%, rgba(30, 41, 59, 0.4) 0%, rgba(10, 13, 20, 1) 90%)',
+        background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
         color: 'var(--text-primary)',
         padding: '28px',
         display: 'flex',
@@ -160,7 +160,7 @@ export const SuiteApp: React.FC<SuiteAppProps> = ({ onOpenReferenceCompanion }) 
             }}
           >
             <span style={{ color: 'var(--text-muted)' }}>Battery Status:</span>
-            <div style={{ fontWeight: 600, color: '#34d399', marginTop: 2 }}>
+            <div style={{ fontWeight: 600, color: 'var(--status-online)', marginTop: 2 }}>
               {status.battery.available ? `${status.battery.capacity}% (${status.battery.status})` : 'AC Power'}
             </div>
           </div>
@@ -262,7 +262,7 @@ export const SuiteApp: React.FC<SuiteAppProps> = ({ onOpenReferenceCompanion }) 
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShieldCheck size={16} color="#10b981" />
+          <ShieldCheck size={16} color="var(--status-online)" />
           <span>
             Every application runs in regular user space with zero root permissions. Launchable via CLI:
             <code className="font-mono" style={{ color: 'var(--accent-cyan)', marginLeft: 6 }}>

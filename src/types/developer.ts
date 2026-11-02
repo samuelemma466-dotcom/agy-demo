@@ -11,6 +11,7 @@ export interface DevProject {
 export interface TerminalCommandPreset {
   id: string;
   title: string;
+  actionId: string;
   command: string;
   category: 'Git' | 'System' | 'Containers' | 'Build';
   description: string;

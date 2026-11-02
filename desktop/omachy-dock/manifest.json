@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "omachy-dock",
+  "name": "Omachy Dock",
+  "version": "0.1.0",
+  "author": "Omachy",
+  "description": "A floating launcher for favourite and running desktop apps.",
+  "kinds": ["panel"],
+  "keepLoaded": true,
+  "entryPoints": {
+    "panel": "Dock.qml"
+  }
+}
